@@ -70,7 +70,7 @@ int SpiPsSelfTestExample(u16 DeviceId)
 {
 	int Status;
 	u8 data;
-	data= 0xAA;
+	data = 0xAA;
 	XSpiPs_Config *SpiConfig;
 
 	/*
@@ -94,11 +94,17 @@ int SpiPsSelfTestExample(u16 DeviceId)
 		return XST_FAILURE;
 	}
 
-	Status = XSpiPs_SetOptions((&Spi), (XSPIPS_CR_CPHA_MASK) | \
-				(XSPIPS_CR_CPOL_MASK));
+	XSpiPs_SetOptions(&Spi, XSPIPS_MASTER_OPTION |
+			   XSPIPS_FORCE_SSELECT_OPTION);
 		if (Status != XST_SUCCESS) {
 			return XST_FAILURE;
-		}
+		};
+
+		XSpiPs_SetClkPrescaler(&Spi, XSPIPS_CLK_PRESCALE_64);
+
+		XSpiPs_SetSlaveSelect(&Spi, 0x00);
+
+		XSpiPs_Enable((&Spi));
 
 	return XST_SUCCESS;
 }
@@ -106,19 +112,26 @@ int SpiPsSelfTestExample(u16 DeviceId)
 
 int main(void)
 {
-	int Status;
+	init_platform();
 
-	Status = SpiPsSelfTestExample(SPI_DEVICE_ID);
-	if (Status != XST_SUCCESS) {
+	int status;
+	uint8_t gg = 0xAA;
+
+//	gg=0xAA;
+
+	status = SpiPsSelfTestExample(SPI_DEVICE_ID);
+	if (status != XST_SUCCESS) {
 		xil_printf("SPI Selftest Example Failed\r\n");
 		return XST_FAILURE;
 	}
-	XSpiPs_Start(Spi);
+	while(1){
+		status = XSpiPs_PolledTransfer(&Spi, &gg, NULL, 1);
+		while (status != XST_SUCCESS){
+			//wait
 
-	XSpiPs_SetSlaveSelect(Spi, );
-
-	 XSpiPs_Transfer()
-
-	xil_printf("Successfully ran SPI Selftest Example\r\n");
+		}
+		xil_printf("data sended\r\n");
+	//	XSpiPs_Transfer(Spi,gg,NULL,1);
+	}
 	return XST_SUCCESS;
 }
