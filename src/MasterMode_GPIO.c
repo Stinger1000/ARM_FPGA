@@ -32,7 +32,6 @@ int main()
     XGpioPs_SetDirectionPin(&Gpio, Output_Pin_2, 1);
     XGpioPs_SetOutputEnablePin(&Gpio, Output_Pin_1, 1);
 
-
     XSpiPs_Config* SpiCfg;
     SpiCfg = XSpiPs_LookupConfig(SPI_DEVICE_ID);
     XSpiPs_CfgInitialize(&Spi ,SpiCfg, SpiCfg->BaseAddress);
@@ -44,13 +43,15 @@ int main()
        {
     	if(XGpioPs_ReadPin(&Gpio,Input_Pin)==1){
            	XGpioPs_WritePin(&Gpio, Output_Pin_1, 0x1);
-           	XGpioPs_WritePin(&Gpio, Output_Pin_2, 0x0);
+           	XGpioPs_WritePin(&Gpio, Output_Pin_2, 0x1);
             XSpiPs_SetSlaveSelect(&Spi, 0x00);
            	XSpiPs_PolledTransfer(&Spi, &data, NULL, 1);
            	xil_printf("CBuffer=%d\r\n",data);
            	while (1){
            		if (XGpioPs_ReadPin(&Gpio,Input_Pin)==0){break;}
            	}
+           	XGpioPs_WritePin(&Gpio, Output_Pin_1, 0x0);
+           	XGpioPs_WritePin(&Gpio, Output_Pin_2, 0x0);
        }
     cleanup_platform();
     return 0;
