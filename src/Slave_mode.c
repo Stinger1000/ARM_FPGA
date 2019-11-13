@@ -54,6 +54,7 @@ int main()
     XSpiPs_CfgInitialize(&Spi ,SpiCfg, SpiCfg->BaseAddress);
     XSpiPs_SetOptions(&Spi,(XSPIPS_CR_CPHA_MASK) | \
 			(XSPIPS_CR_CPOL_MASK));
+
     while(1)
     {
     memset(ReadBuffer, 0x00, sizeof(ReadBuffer));
